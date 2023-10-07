@@ -133,9 +133,9 @@ for root, _, files in os.walk(ruta_originales):
         img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         #aca modifico el dpi y lo guardo con pillow porque opencv no tiene la capacidad de modificar el dpi
         dpi = (400, 400)
-        #img_pil.save(ruta_imagen_editada, dpi=dpi, compression=None)
-        imagen_opencv = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+        img_pil.save(ruta_imagen_editada, dpi=dpi, quality=100)
+        #imagen_opencv = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
         # Guardar la imagen OpenCV en disco porque el hijodemilputa pil me arruina la calidad aunque le ponga sin compresion
-        cv2.imwrite(ruta_imagen_editada,imagen_opencv,[int(cv2.IMWRITE_JPEG_QUALITY), 100])
+        #cv2.imwrite(ruta_imagen_editada,imagen_opencv,[int(cv2.IMWRITE_JPEG_QUALITY), 100])
         print("Archivo editado con exito!")
