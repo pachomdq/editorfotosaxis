@@ -7,17 +7,29 @@ from PIL import Image
 
 ruta_originales = 'originales'
 ruta_editadas = 'nuevas'
-
+print("cargando modelo...",end="")
 modelo_cargado = joblib.load('modelofotosaxis.pkl')
+print("ok!")
+
+def crear_estructura_directorios(origen, destino):
+    for root, _, _ in os.walk(origen):
+        estructura_relativa = os.path.relpath(root, origen)
+        directorio_destino = os.path.join(destino, estructura_relativa)
+        if not os.path.exists(directorio_destino):
+            os.makedirs(directorio_destino)
+
+crear_estructura_directorios(ruta_originales, ruta_editadas)
+
+#esto queda obsoleto
 if not (os.path.exists(ruta_editadas)):
     try:
         os.makedirs(ruta_editadas)    
     except OSError as e:
         print(f'Error al crear la ruta: {e}')
-   
+
 for root, _, files in os.walk(ruta_originales):
   for filename in files:
-    if filename.endswith(('.jpg', '.png')):
+    if filename.endswith(('.jpg', '.png', '.JPG', '.PNG')):
         ruta_imagen_original = os.path.join(root, filename)
         ruta_imagen_editada = os.path.join(ruta_editadas, os.path.relpath(ruta_imagen_original, ruta_originales))
         if not (os.path.exists(ruta_editadas)):
@@ -121,7 +133,9 @@ for root, _, files in os.walk(ruta_originales):
         img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         #aca modifico el dpi y lo guardo con pillow porque opencv no tiene la capacidad de modificar el dpi
         dpi = (400, 400)
-        img_pil.save(ruta_imagen_editada, dpi=dpi, compression=None)
+        #img_pil.save(ruta_imagen_editada, dpi=dpi, compression=None)
+        imagen_opencv = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
-        #cv2.imwrite(ruta_imagen_editada,img,[int(cv2.IMWRITE_JPEG_QUALITY), 100])
+        # Guardar la imagen OpenCV en disco porque el hijodemilputa pil me arruina la calidad aunque le ponga sin compresion
+        cv2.imwrite(ruta_imagen_editada,imagen_opencv,[int(cv2.IMWRITE_JPEG_QUALITY), 100])
         print("Archivo editado con exito!")
